@@ -1,0 +1,1764 @@
+<!doctype html>
+<html lang="bn" class="antialiased">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>মনবন্ধু | MonBondhu — ShasthoSheba (Full)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+Bengali:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root { 
+      --g:#0f5132; 
+      --r:#ef4444; 
+      --muted:#6b7280; 
+      --primary: #0f5132;
+      --primary-light: #d1fae5;
+      --primary-dark: #064e3b;
+      --secondary: #3b82f6;
+      --accent: #8b5cf6;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --success: #10b981;
+      --background: #ffffff;
+      --surface: #f8fafc;
+      --surface-dark: #f1f5f9;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      --border: #e2e8f0;
+      --shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    .dark {
+      --primary: #10b981;
+      --primary-light: #064e3b;
+      --primary-dark: #047857;
+      --secondary: #60a5fa;
+      --accent: #a78bfa;
+      --warning: #fbbf24;
+      --danger: #f87171;
+      --success: #34d399;
+      --background: #0f172a;
+      --surface: #1e293b;
+      --surface-dark: #334155;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    html.light { color-scheme: light; }
+    html.dark { color-scheme: dark; }
+    html.font-en { font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+    html.font-bn { font-family: "Noto Sans Bengali", "Inter", system-ui, sans-serif; }
+
+    body {
+      background-color: var(--background);
+      color: var(--text-primary);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .focus-ring:focus { 
+      outline: none; 
+      box-shadow: 0 0 0 4px rgba(15,81,50,0.12); 
+      border-radius: .5rem; 
+    }
+    .soft-trans { 
+      transition: all .28s ease; 
+    }
+    .floating-voice { 
+      position: fixed; 
+      right: 16px; 
+      bottom: 20px; 
+      z-index: 60; 
+    }
+    .card-tilt { 
+      transform-origin: center; 
+      transition: transform .28s ease, box-shadow .28s ease; 
+    }
+    .card-tilt:hover { 
+      transform: translateY(-6px) rotate(-0.4deg); 
+      box-shadow: 0 10px 30px var(--shadow); 
+    }
+    .tiny { 
+      font-size: .82rem; 
+    }
+    
+    /* modal helper */
+    .modal { 
+      display:none; 
+      position:fixed; 
+      inset:0; 
+      z-index:70; 
+      align-items:center; 
+      justify-content:center; 
+      padding:1rem; 
+      background-color: rgba(0,0,0,0.5); 
+    }
+    .modal.show { 
+      display:flex; 
+    }
+    .hidden { 
+      display: none; 
+    }
+    
+    /* Map styles */
+    .map-container { 
+      position: relative; 
+      height: 100%; 
+      width: 100%; 
+    }
+    .map-placeholder { 
+      width: 100%; 
+      height: 100%; 
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--success) 100%); 
+      border-radius: 0.5rem; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      color: var(--primary-dark); 
+    }
+    .map-marker { 
+      position: absolute; 
+      width: 24px; 
+      height: 24px; 
+      background: var(--danger); 
+      border-radius: 50% 50% 50% 0; 
+      transform: rotate(-45deg); 
+      cursor: pointer; 
+    }
+    .map-marker::after { 
+      content: ''; 
+      position: absolute; 
+      width: 12px; 
+      height: 12px; 
+      background: white; 
+      border-radius: 50%; 
+      top: 6px; 
+      left: 6px; 
+    }
+    .map-marker.health-center { 
+      background: var(--primary); 
+    }
+    .map-marker.clinic { 
+      background: var(--secondary); 
+    }
+    .map-marker.ngo { 
+      background: var(--accent); 
+    }
+    .map-marker.landmark { 
+      background: var(--warning); 
+    }
+    .map-tooltip { 
+      position: absolute; 
+      background: var(--surface); 
+      color: var(--text-primary);
+      padding: 8px 12px; 
+      border-radius: 6px; 
+      box-shadow: 0 4px 6px var(--shadow); 
+      font-size: 0.75rem; 
+      z-index: 10; 
+      white-space: nowrap; 
+    }
+    
+    /* Animation for check-in scale */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    .pulse-animation {
+      animation: pulse 2s infinite;
+    }
+
+    /* Custom card styles */
+    .theme-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px var(--shadow);
+      transition: all 0.3s ease;
+    }
+
+    .theme-card:hover {
+      box-shadow: 0 10px 25px -5px var(--shadow);
+      transform: translateY(-2px);
+    }
+
+    .theme-card-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem;
+      background-color: var(--primary-light);
+      border-radius: 0.75rem;
+      color: var(--primary);
+    }
+
+    .theme-button-primary {
+      background-color: var(--primary);
+      color: white;
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .theme-button-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .theme-button-secondary {
+      background-color: var(--surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .theme-button-secondary:hover {
+      background-color: var(--surface-dark);
+    }
+
+    .theme-input {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      color: var(--text-primary);
+      width: 100%;
+    }
+
+    .theme-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.1);
+    }
+
+    .theme-modal {
+      background-color: var(--surface);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 25px 50px -12px var(--shadow);
+    }
+
+    .theme-header {
+      background-color: var(--surface);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .theme-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-radius: 1rem;
+    }
+
+    /* Cute elements */
+    .cute-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      background-color: var(--primary-light);
+      color: var(--primary);
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .cute-avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+
+    .cute-pulse {
+      position: relative;
+    }
+
+    .cute-pulse::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: inherit;
+      box-shadow: 0 0 0 0 rgba(15, 81, 50, 0.7);
+      animation: cute-pulse 2s infinite;
+    }
+
+    @keyframes cute-pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(15, 81, 50, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 10px rgba(15, 81, 50, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(15, 81, 50, 0);
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-green-50 to-white dark:from-slate-900 dark:to-slate-800 text-slate-900 dark:text-slate-100">
+
+  <!-- HEADER -->
+  <header class="theme-header sticky top-0 z-50 backdrop-blur bg-white/60 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-700">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="cute-avatar cute-pulse">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 18.657 3.172 10.828a4 4 0 010-5.656z"/></svg>
+        </div>
+        <div>
+          <h1 id="brandTitle" class="text-lg md:text-xl font-extrabold">মনবন্ধু</h1>
+          <p id="brandTag" class="tiny text-slate-600 dark:text-slate-300 -mt-0.5">আপনার স্থানীয় স্বাস্থ্যসাথী</p>
+        </div>
+      </div>
+
+      <nav class="flex items-center gap-2">
+        <a href="#features" class="hidden md:inline tiny px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800">বৈশিষ্ট্য</a>
+        <a href="#about" class="hidden md:inline tiny px-3 py-2 rounded hover:bg-slate-100 dark:hover:bg-slate-800">আমাদের সম্পর্কে</a>
+
+        <!-- lang -->
+        <button id="langToggle" class="theme-button-secondary flex items-center gap-2 focus-ring soft-trans" title="Toggle language">
+          <!-- globe -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zM2 12h20M12 2v20"/></svg>
+          <span id="langLabel" class="text-sm">বাংলা</span>
+        </button>
+
+        <!-- font toggle -->
+        <button id="fontToggle" class="hidden md:inline theme-button-secondary focus-ring soft-trans">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M6 6v12M18 6v12"/></svg>
+          <span id="fontLabel" class="text-sm ml-1">ফন্ট: বাংলা</span>
+        </button>
+
+        <!-- theme -->
+        <button id="themeToggle" class="theme-button-secondary flex items-center gap-2 focus-ring soft-trans">
+          <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2"/></svg>
+          <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-300 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          <span id="themeLabel" class="text-sm">ডার্ক</span>
+        </button>
+
+        <!-- account button -->
+        <button id="accountBtn" class="theme-button-secondary flex items-center gap-2 focus-ring soft-trans">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span id="accountLabel" class="text-sm">অ্যাকাউন্ট</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="max-w-6xl mx-auto px-4 md:px-6 py-6">
+
+    <!-- HERO -->
+    <section class="theme-hero rounded-2xl p-6 md:p-10 shadow mb-6">
+      <div class="md:flex md:items-center md:gap-6">
+        <div class="md:flex-1">
+          <h2 id="heroTitle" class="text-2xl md:text-3xl font-extrabold">সুস্থ বাংলাদেশ — সুস্থ মন</h2>
+          <p id="heroSub" class="mt-2 text-slate-100">দৈনন্দিন মানসিক চেক-ইন, স্বাস্থ্যের তথ্য, গোপন সহায়তা এবং ভয়েস-অসিস্ট্যান্ট — সবই গ্রামীণ ব্যবহারকারীদের জন্য সহজ ও অনলাইন-অফলাইন উভয় কাজ করবে।</p>
+          <div class="mt-4 flex gap-3">
+            <button id="startCheckin" class="theme-button-primary pulse-animation">আজকের চেক-ইন</button>
+            <button id="voiceAssistantBtn" class="bg-white/20 text-white px-4 py-2 rounded-full border border-white/30 focus-ring">ভয়েস সহায়িকা</button>
+          </div>
+        </div>
+        <div class="mt-4 md:mt-0 flex items-center justify-center">
+          <img src="https://cdn-icons-png.flaticon.com/512/706/706164.png" alt="health" class="w-44 md:w-56 rounded-xl ring-4 ring-white/20">
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES GRID -->
+    <section id="features" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- 1. Mental Health Check-In -->
+      <article class="theme-card card-tilt">
+        <div class="flex items-start gap-3">
+          <div class="theme-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 8v4l3 3M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold">মানসিক স্বাস্থ্য চেক-ইন</h4>
+            <p class="tiny text-slate-600 dark:text-slate-300 mt-1">দৈনিক সহজ বাংলা স্কেল (১–৫), নোট এবং স্থানীয় ইতিহাস।</p>
+            <div class="mt-3 flex gap-2">
+              <button class="start-checkin-btn theme-button-primary text-sm">শুরু করুন</button>
+              <button id="viewHistory" class="theme-button-secondary text-sm">ইতিহাস</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2. Community Health Map -->
+      <article class="theme-card card-tilt">
+        <div class="flex items-start gap-3">
+          <div class="theme-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s8-4.5 8-11a8 8 0 10-16 0c0 6.5 8 11 8 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold">কমিউনিটি হেলথ ম্যাপ</h4>
+            <p class="tiny text-slate-600 dark:text-slate-300 mt-1">অফলাইন তালিকা ও ল্যান্ডমার্ক সার্চ (বড় আম গাছের পাশে টাইপ)।</p>
+            <div class="mt-3 flex gap-2">
+              <button id="mapBtn" class="theme-button-secondary text-sm">মানচিত্র দেখুন</button>
+              <button id="landmarkBtn" class="theme-button-secondary text-sm">ল্যান্ডমার্ক অনুসন্ধান</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3. Anonymous Help Request -->
+      <article class="theme-card card-tilt">
+        <div class="flex items-start gap-3">
+          <div class="theme-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l7 4v5c0 5-3.1 9.7-7 11-3.9-1.3-7-6-7-11V6l7-4z"/><path d="M9.5 12.5l1.75 1.75L15 11.5"/></svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold">গোপন সহায়তা অনুরোধ</h4>
+            <p class="tiny text-slate-600 dark:text-slate-300 mt-1">নাম/আইডি ছাড়া অনুরোধ কিউ, অফলাইন-সামঞ্জস্য।</p>
+            <div class="mt-3 flex gap-2">
+              <button id="anonBtn" class="theme-button-primary text-sm">অনুরোধ পাঠান</button>
+              <button id="anonQueueBtn" class="theme-button-secondary text-sm">কিউ দেখুন</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 4. Seasonal Tips -->
+      <article class="theme-card card-tilt">
+        <div class="flex items-start gap-3">
+          <div class="theme-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 17.58A5 5 0 0018 7H6a4 4 0 000 8h14z"/></svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold">মৌসুমি প্রতিরোধ টিপস</h4>
+            <p class="tiny text-slate-600 dark:text-slate-300 mt-1">বর্ষা/ডেঙ্গু, শীত/শ্বাসকষ্ট, গ্রীষ্ম-সতর্কতা ব্যাখ্যা করে।</p>
+            <div class="mt-3">
+              <button id="tipsBtn" class="theme-button-secondary text-sm">টিপস দেখুন</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 5. Maternal & Child Tracker -->
+      <article class="theme-card card-tilt">
+        <div class="flex items-start gap-3">
+          <div class="theme-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2a5 5 0 015 5v3H7V7a5 5 0 015-5z"/><path d="M7 14s-1 3 5 3 5-3 5-3"/></svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold">গর্ভনিরীক্ষা ও টিকা ট্র্যাকার</h4>
+            <p class="tiny text-slate-600 dark:text-slate-300 mt-1">বাংলাদেশ EPI অনুযায়ী টিকাদান ও অ্যান্টেনাটাল রিমাইন্ডার (লোকাল স্টোরেজ)।</p>
+            <div class="mt-3">
+              <button id="maternalBtn" class="theme-button-primary text-sm">ট্র্যাক শুরু</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 6. Symptom Awareness Guide -->
+      <article class="theme-card card-tilt">
+        <div class="flex items-start gap-3">
+          <div class="theme-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 9v2m0 4h.01"/><path d="M21 12A9 9 0 1112 3"/></svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold">লক্ষণ শ্রেণিবিভাগ (Symptom Guide)</h4>
+            <p class="tiny text-slate-600 dark:text-slate-300 mt-1">কোন লক্ষণ হলে দ্রুত ডাক্তারের কাছে যাবেন — সহজ বাংলায়, বিজ্ঞপ্তি সহ।</p>
+            <div class="mt-3">
+              <button id="openSymptomsBtn" class="theme-button-secondary text-sm">লক্ষণ দেখুন</button>
+              <button id="reportSymptom" class="theme-button-secondary text-sm">আমি লক্ষণ দেখছি</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 7. Community Health Events -->
+      <article class="theme-card card-tilt">
+        <div class="flex items-start gap-3">
+          <div class="theme-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 7V3M16 7V3M3 11h18M5 21h14a2 2 0 002-2V8H3v11a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold">কমিউনিটি ইভেন্টস</h4>
+            <p class="tiny text-slate-600 dark:text-slate-300 mt-1">নিকটস্থ হেলথ ক্যাম্প, ব্লাড ড্রাইভ, বিনামূল্যের স্ক্রিনিং — অফলাইন তালিকা ও নোটিফাই।</p>
+            <div class="mt-3 flex gap-2">
+              <button id="eventsBtn" class="theme-button-secondary text-sm">ইভেন্টস দেখুন</button>
+              <button id="addEventBtn" class="theme-button-secondary text-sm">ইভেন্ট যোগ করুন</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 8. Volunteer Directory -->
+      <article class="theme-card card-tilt col-span-1 lg:col-span-2">
+        <div class="flex items-start gap-3">
+          <div class="theme-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 21v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold">স্বেচ্ছাসেবক / স্বাস্থ্যকর্মী ডিরেক্টরি</h4>
+            <p class="tiny text-slate-600 dark:text-slate-300 mt-1">ভেরিফাই করা কর্মীদের তালিকা — দক্ষতা, ফোন (ঐচ্ছিক), এবং অনলাইন অ্যাভেইল্যাবিলিটি।</p>
+            <div class="mt-3 flex gap-2">
+              <button id="directoryBtn" class="theme-button-secondary text-sm">ডিরেক্টরি</button>
+              <button id="volAddBtn" class="theme-button-secondary text-sm">ন্যায় যোগ করুন</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 9. Health Data Export for NGOs -->
+      <article class="theme-card card-tilt">
+        <div class="flex items-start gap-3">
+          <div class="theme-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold">সামষ্টিক ডেটা (NGOs)</h4>
+            <p class="tiny text-slate-600 dark:text-slate-300 mt-1">ব্যক্তি সম্পর্কিত ডেটা বাদ দিয়ে অ্যাগ্রিগেট রিপোর্ট তৈরি করুন (CSV/JSON)।</p>
+            <div class="mt-3">
+              <button id="exportFullBtn" class="theme-button-primary text-sm">সারসংক্ষেপ এক্সপোর্ট</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 10. Voice-First Assistant (floating handled separately) -->
+      <article class="theme-card card-tilt">
+        <div class="flex items-start gap-3">
+          <div class="theme-card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 1v11"/><path d="M19 11a7 7 0 01-14 0"/><path d="M12 23v-4"/></svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-bold">ভয়েস-ফার্স্ট হেলথ অ্যাসিস্ট্যান্ট</h4>
+            <p class="tiny text-slate-600 dark:text-slate-300 mt-1">বাংলা Speech-to-Text & TTS — কম-লিটারেরি ও বয়স্কদের জন্য উপযোগী।</p>
+            <div class="mt-3">
+              <button id="voiceBubbleOpen" class="theme-button-secondary text-sm">ভয়েস চালু করুন</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="mt-8 theme-card">
+      <h3 class="font-extrabold">আমাদের লক্ষ্য</h3>
+      <p class="mt-2 text-slate-600 dark:text-slate-300 tiny">মনবন্ধু গ্রামীণ বাংলাদেশে সহজ, গোপনীয় ও কার্যকর স্বাস্থ্য সহায়তা পৌঁছে দিতে চায় — অফলাইন কাজের ক্ষমতা, বর্ণনামূলক টিপস, স্থানীয় নেটওয়ার্ক ও কণ্ঠভিত্তিক সহযোগিতা প্রধান।</p>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-sm text-slate-500 dark:text-slate-400">
+      © ২০২৫ মনবন্ধু | নির্মাণ: শাস্থ্যটেক বাংলাদেশ — ইমেইল: <a href="mailto:computerclub@baiust.ac.bd" class="underline text-emerald-600">computerclub@baiust.ac.bd</a>
+    </footer>
+  </main>
+
+  <!-- FLOATING VOICE BUBBLE -->
+  <div class="floating-voice">
+    <button id="voiceBubble" title="Voice Assistant" class="w-14 h-14 rounded-full bg-emerald-600 shadow-lg flex items-center justify-center text-white focus-ring cute-pulse">
+      <!-- mic -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 1v11"/><path d="M19 11a7 7 0 01-14 0"/><path d="M12 23v-4"/></svg>
+    </button>
+  </div>
+
+  <!-- MODALS -->
+  <div id="modals">
+
+    <!-- Account Modal -->
+    <div id="accountModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-md">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold" id="accountModalTitle">অ্যাকাউন্ট</h4>
+          <button data-close="accountModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <!-- Login Form (default) -->
+        <div id="loginSection">
+          <form id="loginForm" class="mt-4 space-y-3">
+            <div>
+              <label class="text-sm font-medium">ফোন নম্বর বা ইমেইল</label>
+              <input type="text" id="loginId" class="theme-input" placeholder="01XXXXXXXX বা email@example.com" />
+            </div>
+            <div>
+              <label class="text-sm font-medium">পিন কোড (৪ সংখ্যা)</label>
+              <input type="password" id="loginPin" maxlength="4" class="theme-input" placeholder="****" />
+            </div>
+            <div class="flex justify-between items-center">
+              <button type="button" id="showRegister" class="text-sm text-emerald-600 hover:underline">নতুন অ্যাকাউন্ট</button>
+              <div class="flex gap-2">
+                <button type="button" data-close="accountModal" class="theme-button-secondary">বাতিল</button>
+                <button type="submit" class="theme-button-primary">লগইন</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        
+        <!-- Register Form -->
+        <div id="registerSection" class="hidden">
+          <form id="registerForm" class="mt-4 space-y-3">
+            <div>
+              <label class="text-sm font-medium">পুরো নাম</label>
+              <input type="text" id="regName" class="theme-input" />
+            </div>
+            <div>
+              <label class="text-sm font-medium">ফোন নম্বর</label>
+              <input type="text" id="regPhone" class="theme-input" placeholder="01XXXXXXXX" />
+            </div>
+            <div>
+              <label class="text-sm font-medium">ইমেইল (ঐচ্ছিক)</label>
+              <input type="email" id="regEmail" class="theme-input" />
+            </div>
+            <div>
+              <label class="text-sm font-medium">পিন কোড (৪ সংখ্যা)</label>
+              <input type="password" id="regPin" maxlength="4" class="theme-input" placeholder="****" />
+            </div>
+            <div class="flex justify-between items-center">
+              <button type="button" id="showLogin" class="text-sm text-emerald-600 hover:underline">লগইন</button>
+              <div class="flex gap-2">
+                <button type="button" data-close="accountModal" class="theme-button-secondary">বাতিল</button>
+                <button type="submit" class="theme-button-primary">রেজিস্টার</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Check-in Modal -->
+    <div id="checkinModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-md">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold text-lg">আজকের মানসিক স্বাস্থ্য চেক-ইন</h4>
+          <button data-close="checkinModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <form id="checkinForm" class="mt-4 space-y-4">
+          <div>
+            <label class="text-sm font-medium">আপনি আজ কেমন অনুভব করছেন? (১-৫ স্কেল)</label>
+            <div class="flex justify-between mt-2">
+              <label class="flex flex-col items-center">
+                <input type="radio" name="mood" value="1" class="mood-radio hidden">
+                <span class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600">১</span>
+                <span class="text-xs mt-1">খুব খারাপ</span>
+              </label>
+              <label class="flex flex-col items-center">
+                <input type="radio" name="mood" value="2" class="mood-radio hidden">
+                <span class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600">২</span>
+                <span class="text-xs mt-1">খারাপ</span>
+              </label>
+              <label class="flex flex-col items-center">
+                <input type="radio" name="mood" value="3" class="mood-radio hidden">
+                <span class="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center text-yellow-600">৩</span>
+                <span class="text-xs mt-1">মোটামুটি</span>
+              </label>
+              <label class="flex flex-col items-center">
+                <input type="radio" name="mood" value="4" class="mood-radio hidden">
+                <span class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600">৪</span>
+                <span class="text-xs mt-1">ভাল</span>
+              </label>
+              <label class="flex flex-col items-center">
+                <input type="radio" name="mood" value="5" class="mood-radio hidden">
+                <span class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600">৫</span>
+                <span class="text-xs mt-1">খুব ভাল</span>
+              </label>
+            </div>
+          </div>
+          
+          <div>
+            <label class="text-sm font-medium">আজকের মন্তব্য (ঐচ্ছিক)</label>
+            <textarea id="checkinNote" class="theme-input mt-1" rows="3" placeholder="আপনার আজকের অনুভূতি সম্পর্কে লিখুন..."></textarea>
+          </div>
+          
+          <div class="flex justify-end gap-2">
+            <button type="button" data-close="checkinModal" class="theme-button-secondary">বাতিল</button>
+            <button type="submit" class="theme-button-primary">সেভ করুন</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Community Map Modal -->
+    <div id="mapModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-4xl">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold text-lg">কমিউনিটি হেলথ ম্যাপ</h4>
+          <button data-close="mapModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <div class="mt-4 flex flex-col md:flex-row gap-4">
+          <!-- Map Controls -->
+          <div class="w-full md:w-1/3 space-y-4">
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-medium">অঞ্চল নির্বাচন করুন:</label>
+              <select id="areaSelect" class="theme-input">
+                <option value="current">বর্তমান অবস্থান</option>
+                <option value="village1">গ্রাম ১ - উত্তর</option>
+                <option value="village2">গ্রাম ২ - দক্ষিণ</option>
+                <option value="village3">গ্রাম ৩ - পূর্ব</option>
+                <option value="village4">গ্রাম ৪ - পশ্চিম</option>
+              </select>
+            </div>
+            
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-medium">সেবার ধরন:</label>
+              <div class="space-y-2">
+                <label class="flex items-center">
+                  <input type="checkbox" class="facility-type" value="health-center" checked> 
+                  <span class="ml-2">স্বাস্থ্য কেন্দ্র</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="checkbox" class="facility-type" value="clinic" checked> 
+                  <span class="ml-2">ক্লিনিক</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="checkbox" class="facility-type" value="ngo" checked> 
+                  <span class="ml-2">এনজিও</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="checkbox" class="facility-type" value="landmark" checked> 
+                  <span class="ml-2">ল্যান্ডমার্ক</span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-medium">ল্যান্ডমার্ক অনুসন্ধান:</label>
+              <div class="flex gap-2">
+                <input type="text" id="landmarkSearch" class="flex-1 theme-input" placeholder="বড় আম গাছ, মসজিদ, স্কুল...">
+                <button id="searchLandmark" class="theme-button-primary">খুঁজুন</button>
+              </div>
+            </div>
+            
+            <div class="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-lg">
+              <h5 class="font-medium text-sm">নিকটস্থ স্বাস্থ্য সুবিধা:</h5>
+              <div id="nearbyFacilities" class="mt-2 space-y-2">
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 bg-emerald-600 rounded-full"></div>
+                  <span class="text-sm">উত্তর গ্রাম স্বাস্থ্য কেন্দ্র (০.৫ কিমি)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <span class="text-sm">সুস্থতা ক্লিনিক (১.২ কিমি)</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                  <span class="text-sm">ব্র্যাক স্বাস্থ্য সেবা (২.১ কিমি)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Map Visualization -->
+          <div class="w-full md:w-2/3">
+            <div class="map-container h-96 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+              <div class="map-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-emerald-600 mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <path d="M12 21s8-4.5 8-11a8 8 0 10-16 0c0 6.5 8 11 8 11z"/>
+                  <circle cx="12" cy="10" r="2.5"/>
+                </svg>
+                <h3 class="text-xl font-bold">কমিউনিটি হেলথ ম্যাপ</h3>
+                <p class="mt-2 text-center">আপনার অঞ্চলের স্বাস্থ্য সুবিধা এবং ল্যান্ডমার্ক দেখানো হচ্ছে</p>
+                
+                <!-- Map Markers -->
+                <div class="map-marker health-center" style="top: 30%; left: 40%;" data-title="উত্তর গ্রাম স্বাস্থ্য কেন্দ্র" data-type="health-center"></div>
+                <div class="map-marker clinic" style="top: 50%; left: 60%;" data-title="সুস্থতা ক্লিনিক" data-type="clinic"></div>
+                <div class="map-marker ngo" style="top: 70%; left: 30%;" data-title="ব্র্যাক স্বাস্থ্য সেবা" data-type="ngo"></div>
+                <div class="map-marker landmark" style="top: 20%; left: 70%;" data-title="বড় আম গাছ" data-type="landmark"></div>
+                <div class="map-marker landmark" style="top: 60%; left: 20%;" data-title="গ্রাম মসজিদ" data-type="landmark"></div>
+                <div class="map-marker health-center" style="top: 40%; left: 80%;" data-title="দক্ষিণ গ্রাম স্বাস্থ্য কেন্দ্র" data-type="health-center"></div>
+              </div>
+            </div>
+            
+            <div class="mt-4 flex flex-wrap gap-2">
+              <div class="flex items-center gap-1">
+                <div class="w-3 h-3 bg-emerald-600 rounded-full"></div>
+                <span class="text-xs">স্বাস্থ্য কেন্দ্র</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <span class="text-xs">ক্লিনিক</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                <span class="text-xs">এনজিও</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <div class="w-3 h-3 bg-amber-500 rounded-full"></div>
+                <span class="text-xs">ল্যান্ডমার্ক</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Landmark Search Modal -->
+    <div id="landmarkModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-md">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold text-lg">ল্যান্ডমার্ক অনুসন্ধান</h4>
+          <button data-close="landmarkModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <div class="mt-4">
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">আপনি যদি কোনো স্থানের নাম না জানেন, তবে পরিচিত ল্যান্ডমার্ক দিয়ে অনুসন্ধান করুন।</p>
+          
+          <div class="space-y-3">
+            <div>
+              <label class="text-sm font-medium">ল্যান্ডমার্কের ধরন:</label>
+              <select id="landmarkType" class="theme-input mt-1">
+                <option value="all">সব ধরনের</option>
+                <option value="tree">বড় গাছ</option>
+                <option value="mosque">মসজিদ</option>
+                <option value="school">স্কুল</option>
+                <option value="market">বাজার</option>
+                <option value="pond">পুকুর/ডোবা</option>
+                <option value="bridge">সেতু</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="text-sm font-medium">ল্যান্ডমার্কের নাম বা বর্ণনা:</label>
+              <input type="text" id="landmarkQuery" class="theme-input mt-1" placeholder="উদাহরণ: বড় আম গাছ, নতুন মসজিদ, প্রাথমিক স্কুল...">
+            </div>
+            
+            <button id="searchLandmarks" class="w-full theme-button-primary">ল্যান্ডমার্ক খুঁজুন</button>
+          </div>
+          
+          <div id="landmarkResults" class="mt-4 space-y-3 hidden">
+            <h5 class="font-medium">ফলাফল:</h5>
+            <div class="space-y-2">
+              <!-- Results will be populated here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Symptoms Modal -->
+    <div id="symptomsModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-2xl">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold text-lg">লক্ষণ শ্রেণিবিভাগ গাইড</h4>
+          <button data-close="symptomsModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <div class="mt-4">
+          <p class="text-sm text-slate-600 dark:text-slate-300 mb-4">নিচের লক্ষণগুলো দেখা দিলে দ্রুত স্বাস্থ্যকেন্দ্রে যোগাযোগ করুন:</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
+              <h5 class="font-bold text-red-700 dark:text-red-300">জরুরি অবস্থা</h5>
+              <ul class="text-sm mt-2 space-y-1">
+                <li>• তীব্র বুকে ব্যথা</li>
+                <li>• শ্বাসকষ্ট</li>
+                <li>• অজ্ঞান হয়ে যাওয়া</li>
+                <li>• গুরুতর রক্তক্ষরণ</li>
+                <li>• খিঁচুনি</li>
+              </ul>
+            </div>
+            
+            <div class="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg">
+              <h5 class="font-bold text-amber-700 dark:text-amber-300">দ্রুত চিকিৎসা প্রয়োজন</h5>
+              <ul class="text-sm mt-2 space-y-1">
+                <li>• উচ্চ জ্বর (৩ দিনের বেশি)</li>
+                <li>• তীব্র পেটে ব্যথা</li>
+                <li>• অবিরাম বমি</li>
+                <li>• ত্বকে ফুসকুড়ি</li>
+                <li>• প্রস্রাবে সমস্যা</li>
+              </ul>
+            </div>
+            
+            <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+              <h5 class="font-bold text-blue-700 dark:text-blue-300">সাধারণ চিকিৎসা</h5>
+              <ul class="text-sm mt-2 space-y-1">
+                <li>• সর্দি-কাশি</li>
+                <li>• হালকা জ্বর</li>
+                <li>• মাথাব্যথা</li>
+                <li>• পেট খারাপ</li>
+                <li>• হালকা চর্মরোগ</li>
+              </ul>
+            </div>
+            
+            <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+              <h5 class="font-bold text-green-700 dark:text-green-300">ঘরোয়া চিকিৎসা</h5>
+              <ul class="text-sm mt-2 space-y-1">
+                <li>• হালকা সর্দি</li>
+                <li>• ক্ষুধামন্দা</li>
+                <li>• ক্লান্তি</li>
+                <li>• মাংসপেশিতে টান</li>
+                <li>• ছোট কাটা-ছেঁড়া</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="mt-6">
+            <button id="reportSymptomBtn" class="w-full theme-button-primary">আমি লক্ষণ দেখছি - রিপোর্ট করুন</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Symptom Modal -->
+    <div id="reportSymptomModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-md">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold text-lg">লক্ষণ রিপোর্ট করুন</h4>
+          <button data-close="reportSymptomModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <form id="symptomForm" class="mt-4 space-y-4">
+          <div>
+            <label class="text-sm font-medium">লক্ষণ নির্বাচন করুন:</label>
+            <select id="symptomSelect" class="theme-input mt-1">
+              <option value="">লক্ষণ নির্বাচন করুন</option>
+              <option value="fever">জ্বর</option>
+              <option value="cough">কাশি</option>
+              <option value="headache">মাথাব্যথা</option>
+              <option value="chest_pain">বুকে ব্যথা</option>
+              <option value="breathing">শ্বাসকষ্ট</option>
+              <option value="vomiting">বমি</option>
+              <option value="diarrhea">পাতলা পায়খানা</option>
+              <option value="rash">ত্বকে ফুসকুড়ি</option>
+              <option value="other">অন্যান্য</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="text-sm font-medium">লক্ষণের বিবরণ:</label>
+            <textarea id="symptomDescription" class="theme-input mt-1" rows="3" placeholder="লক্ষণ কখন শুরু হয়েছে, কতটা তীব্র ইত্যাদি বিস্তারিত লিখুন..."></textarea>
+          </div>
+          
+          <div class="flex justify-end gap-2">
+            <button type="button" data-close="reportSymptomModal" class="theme-button-secondary">বাতিল</button>
+            <button type="submit" class="theme-button-primary">রিপোর্ট করুন</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Seasonal Tips Modal -->
+    <div id="tipsModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-2xl">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold text-lg">মৌসুমি স্বাস্থ্য টিপস</h4>
+          <button data-close="tipsModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <div class="mt-4">
+          <div class="flex gap-2 mb-4">
+            <button class="season-btn active theme-button-primary" data-season="summer">গ্রীষ্মকাল</button>
+            <button class="season-btn theme-button-secondary" data-season="monsoon">বর্ষাকাল</button>
+            <button class="season-btn theme-button-secondary" data-season="winter">শীতকাল</button>
+          </div>
+          
+          <div id="summerTips" class="season-content">
+            <h5 class="font-bold text-lg">গ্রীষ্মকালীন স্বাস্থ্য সতর্কতা</h5>
+            <ul class="mt-2 space-y-2">
+              <li>• প্রচুর পানি পান করুন</li>
+              <li>• সরাসরি সূর্যের আলো থেকে দূরে থাকুন</li>
+              <li>• হালকা রঙের সুতি কাপড় পরুন</li>
+              <li>• তাজা ও হালকা খাবার খান</li>
+              <li>• ডিহাইড্রেশন এড়াতে নিয়মিত তরল পান করুন</li>
+            </ul>
+          </div>
+          
+          <div id="monsoonTips" class="season-content hidden">
+            <h5 class="font-bold text-lg">বর্ষাকালীন স্বাস্থ্য সতর্কতা</h5>
+            <ul class="mt-2 space-y-2">
+              <li>• মশারি ব্যবহার করুন</li>
+              <li>• জলাবদ্ধতা এড়িয়ে চলুন</li>
+              <li>• বিশুদ্ধ পানি পান করুন</li>
+              <li>• ডেঙ্গু প্রতিরোধে সতর্ক থাকুন</li>
+              <li>• ভেজা কাপড় দ্রুত পরিবর্তন করুন</li>
+            </ul>
+          </div>
+          
+          <div id="winterTips" class="season-content hidden">
+            <h5 class="font-bold text-lg">শীতকালীন স্বাস্থ্য সতর্কতা</h5>
+            <ul class="mt-2 space-y-2">
+              <li>• গরম কাপড় পরুন</li>
+              <li>• গরম পানি ও খাবার গ্রহণ করুন</li>
+              <li>• ঠান্ডা থেকে ত্বক রক্ষা করুন</li>
+              <li>• শ্বাসকষ্টের রোগীরা বিশেষ সতর্কতা নিন</li>
+              <li>• নিয়মিত ব্যায়াম করুন</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Anonymous Help Modal -->
+    <div id="anonModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-md">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold text-lg">গোপন সহায়তা অনুরোধ</h4>
+          <button data-close="anonModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <form id="anonForm" class="mt-4 space-y-4">
+          <div>
+            <label class="text-sm font-medium">আপনার সমস্যার বিবরণ:</label>
+            <textarea id="anonDescription" class="theme-input mt-1" rows="4" placeholder="আপনার সমস্যা সম্পর্কে বিস্তারিত লিখুন..."></textarea>
+          </div>
+          
+          <div class="flex items-center">
+            <input type="checkbox" id="anonAgree" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+            <label for="anonAgree" class="ml-2 text-sm">আমি বুঝেছি যে এটি একটি গোপন অনুরোধ এবং আমার ব্যক্তিগত তথ্য শেয়ার করা হবে না</label>
+          </div>
+          
+          <div class="flex justify-end gap-2">
+            <button type="button" data-close="anonModal" class="theme-button-secondary">বাতিল</button>
+            <button type="submit" class="theme-button-primary">অনুরোধ পাঠান</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Events Modal -->
+    <div id="eventsModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-2xl">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold text-lg">কমিউনিটি ইভেন্টস</h4>
+          <button data-close="eventsModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <div class="mt-4">
+          <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-lg">
+            <h5 class="font-bold">আসন্ন ইভেন্টস</h5>
+            <div class="mt-2 space-y-3">
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                  <span class="text-emerald-600 font-bold">১৫</span>
+                </div>
+                <div>
+                  <h6 class="font-medium">মুক্ত স্বাস্থ্য শিবির</h6>
+                  <p class="text-sm text-slate-600 dark:text-slate-300">উপজেলা মাঠ, আগামীকাল সকাল ৯টা</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                  <span class="text-blue-600 font-bold">২০</span>
+                </div>
+                <div>
+                  <h6 class="font-medium">রক্তদান শিবির</h6>
+                  <p class="text-sm text-slate-600 dark:text-slate-300">কমিউনিটি সেন্টার, পরশু সকাল ১০টা</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4">
+            <h5 class="font-bold">নতুন ইভেন্ট যোগ করুন</h5>
+            <form id="eventForm" class="mt-2 space-y-3">
+              <div>
+                <label class="text-sm font-medium">ইভেন্টের নাম</label>
+                <input type="text" id="eventName" class="theme-input" placeholder="ইভেন্টের নাম লিখুন...">
+              </div>
+              
+              <div>
+                <label class="text-sm font-medium">তারিখ ও সময়</label>
+                <input type="text" id="eventDateTime" class="theme-input" placeholder="তারিখ ও সময় লিখুন...">
+              </div>
+              
+              <div>
+                <label class="text-sm font-medium">স্থান</label>
+                <input type="text" id="eventLocation" class="theme-input" placeholder="স্থানের নাম লিখুন...">
+              </div>
+              
+              <div class="flex justify-end">
+                <button type="submit" class="theme-button-primary">ইভেন্ট যোগ করুন</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Volunteer Directory Modal -->
+    <div id="directoryModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-3xl">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold text-lg">স্বেচ্ছাসেবক ডিরেক্টরি</h4>
+          <button data-close="directoryModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <div class="mt-4">
+          <div class="flex gap-2 mb-4">
+            <input type="text" id="volunteerSearch" class="flex-1 theme-input" placeholder="নাম বা দক্ষতা দিয়ে খুঁজুন...">
+            <button id="searchVolunteer" class="theme-button-primary">খুঁজুন</button>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-lg">
+              <h5 class="font-bold">মোঃ রশিদ</h5>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">কমিউনিটি কেয়ার, প্রাথমিক চিকিৎসা</p>
+              <p class="text-sm mt-2">ফোন: ০১৭১২-৩৪৫৬৭৮</p>
+            </div>
+            
+            <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-lg">
+              <h5 class="font-bold">রুমা খাতুন</h5>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">মা-শিশু পরামর্শ, টিকা সহায়ক</p>
+              <p class="text-sm mt-2">ফোন: ০১৯৮৭-৬৫৪৩২১</p>
+            </div>
+            
+            <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-lg">
+              <h5 class="font-bold">করিম উদ্দিন</h5>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">স্বাস্থ্য শিক্ষা, পুষ্টি পরামর্শ</p>
+              <p class="text-sm mt-2">ফোন: ০১৮৩২-১১২২৩৩</p>
+            </div>
+            
+            <div class="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-lg">
+              <h5 class="font-bold">নাসরিন আক্তার</h5>
+              <p class="text-sm text-slate-600 dark:text-slate-300 mt-1">মানসিক স্বাস্থ্য সহায়তা</p>
+              <p class="text-sm mt-2">ফোন: ০১৬৭১-৮৮৯৯০০</p>
+            </div>
+          </div>
+          
+          <div class="mt-4">
+            <h5 class="font-bold">নতুন স্বেচ্ছাসেবক যোগ করুন</h5>
+            <form id="volunteerForm" class="mt-2 space-y-3">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-sm font-medium">নাম</label>
+                  <input type="text" id="volunteerName" class="theme-input">
+                </div>
+                
+                <div>
+                  <label class="text-sm font-medium">ফোন নম্বর</label>
+                  <input type="text" id="volunteerPhone" class="theme-input">
+                </div>
+              </div>
+              
+              <div>
+                <label class="text-sm font-medium">দক্ষতা</label>
+                <input type="text" id="volunteerSkills" class="theme-input" placeholder="দক্ষতা কমা দিয়ে আলাদা করুন">
+              </div>
+              
+              <div class="flex justify-end">
+                <button type="submit" class="theme-button-primary">যোগ করুন</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Maternal Tracker Modal -->
+    <div id="maternalModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-md">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold text-lg">গর্ভনিরীক্ষা ও টিকা ট্র্যাকার</h4>
+          <button data-close="maternalModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <div class="mt-4">
+          <div class="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-lg">
+            <h5 class="font-bold text-emerald-700 dark:text-emerald-300">গর্ভাবস্থা ট্র্যাকার</h5>
+            <div class="mt-2 space-y-2">
+              <div class="flex justify-between">
+                <span>বর্তমান সপ্তাহ:</span>
+                <span class="font-bold">২৪ সপ্তাহ</span>
+              </div>
+              <div class="flex justify-between">
+                <span>আনুমানিক ডেলিভারি তারিখ:</span>
+                <span class="font-bold">১৫ জুলাই, ২০২৫</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+            <h5 class="font-bold text-blue-700 dark:text-blue-300">শিশু টিকা ট্র্যাকার</h5>
+            <div class="mt-2 space-y-2">
+              <div class="flex justify-between">
+                <span>বিসিজি টিকা:</span>
+                <span class="font-bold text-emerald-600">সম্পন্ন</span>
+              </div>
+              <div class="flex justify-between">
+                <span>পোলিও টিকা (১ম ডোজ):</span>
+                <span class="font-bold text-emerald-600">সম্পন্ন</span>
+              </div>
+              <div class="flex justify-between">
+                <span>পেন্টাভ্যালেন্ট টিকা (১ম ডোজ):</span>
+                <span class="font-bold text-amber-600">অপেক্ষমান</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-4">
+            <button id="addPregnancy" class="w-full theme-button-secondary mb-2">গর্ভাবস্থা যোগ করুন</button>
+            <button id="addChild" class="w-full theme-button-primary">শিশু যোগ করুন</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Voice Assistant Modal -->
+    <div id="voiceModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-md">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold text-lg">ভয়েস সহায়িকা</h4>
+          <button data-close="voiceModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <div class="mt-4">
+          <div class="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-lg text-center">
+            <div class="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-800 mx-auto flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 1v11"/><path d="M19 11a7 7 0 01-14 0"/><path d="M12 23v-4"/></svg>
+            </div>
+            <p class="mt-2 text-sm">আপনার কথা শুনছি...</p>
+          </div>
+          
+          <div class="mt-4">
+            <p class="text-sm text-slate-600 dark:text-slate-300">আপনি বলতে পারেন:</p>
+            <ul class="mt-2 text-sm space-y-1">
+              <li>• "আমার মন কেমন" - চেক-ইন শুরু করতে</li>
+              <li>• "সাহায্য চাই" - গোপন অনুরোধ পাঠাতে</li>
+              <li>• "ক্লিনিক খুঁজুন" - নিকটস্থ স্বাস্থ্যকেন্দ্র দেখতে</li>
+              <li>• "লক্ষণ রিপোর্ট" - স্বাস্থ্য সমস্যা রিপোর্ট করতে</li>
+            </ul>
+          </div>
+          
+          <div class="mt-4 flex justify-center">
+            <button id="startListening" class="theme-button-primary flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 1v11"/><path d="M19 11a7 7 0 01-14 0"/><path d="M12 23v-4"/></svg>
+              কথা বলুন
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export Data Modal -->
+    <div id="exportModal" class="modal" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="theme-modal w-full max-w-md">
+        <div class="flex justify-between items-start">
+          <h4 class="font-bold text-lg">ডেটা এক্সপোর্ট</h4>
+          <button data-close="exportModal" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-200">&times;</button>
+        </div>
+        
+        <div class="mt-4">
+          <p class="text-sm text-slate-600 dark:text-slate-300">আপনার স্বাস্থ্য ডেটা ডাউনলোড করুন। এই ডেটা শুধুমাত্র সামষ্টিক বিশ্লেষণের জন্য ব্যবহার করা হবে।</p>
+          
+          <div class="mt-4 space-y-3">
+            <div class="flex items-center justify-between p-3 rounded-lg border">
+              <div>
+                <h6 class="font-medium">চেক-ইন ডেটা</h6>
+                <p class="text-sm text-slate-500">আপনার দৈনন্দিন মনের অবস্থা</p>
+              </div>
+              <button class="theme-button-primary text-sm">ডাউনলোড</button>
+            </div>
+            
+            <div class="flex items-center justify-between p-3 rounded-lg border">
+              <div>
+                <h6 class="font-medium">লক্ষণ রিপোর্ট</h6>
+                <p class="text-sm text-slate-500">আপনার স্বাস্থ্য লক্ষণগুলোর রিপোর্ট</p>
+              </div>
+              <button class="theme-button-primary text-sm">ডাউনলোড</button>
+            </div>
+            
+            <div class="flex items-center justify-between p-3 rounded-lg border">
+              <div>
+                <h6 class="font-medium">সামষ্টিক ডেটা</h6>
+                <p class="text-sm text-slate-500">এনজিওর জন্য সামষ্টিক বিশ্লেষণ</p>
+              </div>
+              <button class="theme-button-primary text-sm">ডাউনলোড</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- JS -->
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+    const themeLabel = document.getElementById('themeLabel');
+    
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+        themeLabel.textContent = 'লাইট';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+        themeLabel.textContent = 'ডার্ক';
+        localStorage.setItem('theme', 'light');
+      }
+    }
+    
+    // Initialize theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    applyTheme(savedTheme);
+    
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+      applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    });
+    
+    // Language Toggle
+    const langToggle = document.getElementById('langToggle');
+    const langLabel = document.getElementById('langLabel');
+    const brandTitle = document.getElementById('brandTitle');
+    const brandTag = document.getElementById('brandTag');
+    const heroTitle = document.getElementById('heroTitle');
+    const heroSub = document.getElementById('heroSub');
+    
+    const bnText = {
+      brandTitle: 'মনবন্ধু',
+      brandTag: 'আপনার স্থানীয় স্বাস্থ্যসাথী',
+      heroTitle: 'সুস্থ বাংলাদেশ — সুস্থ মন',
+      heroSub: 'দৈনন্দিন মানসিক চেক-ইন, স্বাস্থ্যের তথ্য, গোপন সহায়তা এবং ভয়েস-অসিস্ট্যান্ট — সবই গ্রামীণ ব্যবহারকারীদের জন্য সহজ ও অনলাইন-অফলাইন উভয় কাজ করবে।',
+      langLabel: 'English',
+      themeLabel: document.documentElement.classList.contains('dark') ? 'লাইট' : 'ডার্ক'
+    };
+    
+    const enText = {
+      brandTitle: 'MonBondhu',
+      brandTag: 'Your Local Health Companion',
+      heroTitle: 'Healthy Bangladesh — Healthy Mind',
+      heroSub: 'Daily mental check-ins, health information, anonymous help, and voice assistant — all designed for rural users with easy online-offline functionality.',
+      langLabel: 'বাংলা',
+      themeLabel: document.documentElement.classList.contains('dark') ? 'Light' : 'Dark'
+    };
+    
+    let currentLang = localStorage.getItem('lang') || 'bn';
+    
+    function applyLanguage(lang) {
+      const texts = lang === 'bn' ? bnText : enText;
+      
+      brandTitle.textContent = texts.brandTitle;
+      brandTag.textContent = texts.brandTag;
+      heroTitle.textContent = texts.heroTitle;
+      heroSub.textContent = texts.heroSub;
+      langLabel.textContent = texts.langLabel;
+      themeLabel.textContent = texts.themeLabel;
+      
+      document.documentElement.classList.toggle('font-bn', lang === 'bn');
+      document.documentElement.classList.toggle('font-en', lang === 'en');
+      
+      localStorage.setItem('lang', lang);
+    }
+    
+    applyLanguage(currentLang);
+    
+    langToggle.addEventListener('click', () => {
+      currentLang = currentLang === 'bn' ? 'en' : 'bn';
+      applyLanguage(currentLang);
+    });
+    
+    // Font Toggle
+    const fontToggle = document.getElementById('fontToggle');
+    const fontLabel = document.getElementById('fontLabel');
+    
+    let currentFont = localStorage.getItem('font') || 'bn';
+    
+    function applyFont(font) {
+      if (font === 'bn') {
+        document.documentElement.classList.add('font-bn');
+        document.documentElement.classList.remove('font-en');
+        fontLabel.textContent = 'ফন্ট: বাংলা';
+      } else {
+        document.documentElement.classList.add('font-en');
+        document.documentElement.classList.remove('font-bn');
+        fontLabel.textContent = 'Font: English';
+      }
+      
+      localStorage.setItem('font', font);
+    }
+    
+    applyFont(currentFont);
+    
+    fontToggle.addEventListener('click', () => {
+      currentFont = currentFont === 'bn' ? 'en' : 'bn';
+      applyFont(currentFont);
+    });
+    
+    // Modal Management
+    function openModal(id) {
+      document.getElementById(id).classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+      document.body.style.overflow = '';
+    }
+    
+    // Close modals when clicking the close button or outside
+    document.addEventListener('click', (e) => {
+      if (e.target.hasAttribute('data-close')) {
+        const modalId = e.target.getAttribute('data-close');
+        closeModal(modalId);
+      } else if (e.target.classList.contains('modal')) {
+        closeModal(e.target.id);
+      }
+    });
+    
+    // Account Modal
+    document.getElementById('accountBtn').addEventListener('click', () => openModal('accountModal'));
+    document.getElementById('showRegister').addEventListener('click', () => {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('registerSection').classList.remove('hidden');
+    });
+    document.getElementById('showLogin').addEventListener('click', () => {
+      document.getElementById('registerSection').classList.add('hidden');
+      document.getElementById('loginSection').classList.remove('hidden');
+    });
+    
+    // Check-in Modal
+    document.getElementById('startCheckin').addEventListener('click', () => openModal('checkinModal'));
+    document.querySelectorAll('.start-checkin-btn').forEach(btn => {
+      btn.addEventListener('click', () => openModal('checkinModal'));
+    });
+    
+    // Map Modal
+    document.getElementById('mapBtn').addEventListener('click', () => openModal('mapModal'));
+    
+    // Landmark Modal
+    document.getElementById('landmarkBtn').addEventListener('click', () => openModal('landmarkModal'));
+    
+    // Symptoms Modal
+    document.getElementById('openSymptomsBtn').addEventListener('click', () => openModal('symptomsModal'));
+    
+    // Report Symptom Modal
+    document.getElementById('reportSymptom').addEventListener('click', () => openModal('reportSymptomModal'));
+    document.getElementById('reportSymptomBtn').addEventListener('click', () => {
+      closeModal('symptomsModal');
+      openModal('reportSymptomModal');
+    });
+    
+    // Tips Modal
+    document.getElementById('tipsBtn').addEventListener('click', () => openModal('tipsModal'));
+    
+    // Anonymous Help Modal
+    document.getElementById('anonBtn').addEventListener('click', () => openModal('anonModal'));
+    
+    // Events Modal
+    document.getElementById('eventsBtn').addEventListener('click', () => openModal('eventsModal'));
+    document.getElementById('addEventBtn').addEventListener('click', () => openModal('eventsModal'));
+    
+    // Directory Modal
+    document.getElementById('directoryBtn').addEventListener('click', () => openModal('directoryModal'));
+    document.getElementById('volAddBtn').addEventListener('click', () => openModal('directoryModal'));
+    
+    // Maternal Tracker Modal
+    document.getElementById('maternalBtn').addEventListener('click', () => openModal('maternalModal'));
+    
+    // Voice Assistant Modal
+    document.getElementById('voiceBubble').addEventListener('click', () => openModal('voiceModal'));
+    document.getElementById('voiceBubbleOpen').addEventListener('click', () => openModal('voiceModal'));
+    document.getElementById('voiceAssistantBtn').addEventListener('click', () => openModal('voiceModal'));
+    
+    // Export Modal
+    document.getElementById('exportFullBtn').addEventListener('click', () => openModal('exportModal'));
+    
+    // View History
+    document.getElementById('viewHistory').addEventListener('click', () => {
+      alert('আপনার চেক-ইন ইতিহাস:\n\n১৫ মার্চ: ৪ - ভাল\n১৪ মার্চ: ৩ - মোটামুটি\n১৩ মার্চ: ৫ - খুব ভাল\n১২ মার্চ: ২ - খারাপ');
+    });
+    
+    // Anonymous Queue
+    document.getElementById('anonQueueBtn').addEventListener('click', () => {
+      alert('বর্তমান অনুরোধ কিউ:\n\n১. মানসিক স্বাস্থ্য সহায়তা প্রয়োজন\n২. পরিবার পরিকল্পনা পরামর্শ\n৩. শিশু স্বাস্থ্য সমস্যা');
+    });
+    
+    // Mood Selection
+    document.querySelectorAll('.mood-radio').forEach(radio => {
+      radio.addEventListener('change', function() {
+        document.querySelectorAll('.mood-radio').forEach(r => {
+          const span = r.nextElementSibling;
+          span.classList.remove('bg-emerald-600', 'text-white');
+          if (r.value === '1') span.classList.add('bg-red-100', 'dark:bg-red-900/30', 'text-red-600');
+          if (r.value === '2') span.classList.add('bg-orange-100', 'dark:bg-orange-900/30', 'text-orange-600');
+          if (r.value === '3') span.classList.add('bg-yellow-100', 'dark:bg-yellow-900/30', 'text-yellow-600');
+          if (r.value === '4') span.classList.add('bg-green-100', 'dark:bg-green-900/30', 'text-green-600');
+          if (r.value === '5') span.classList.add('bg-emerald-100', 'dark:bg-emerald-900/30', 'text-emerald-600');
+        });
+        
+        const span = this.nextElementSibling;
+        span.classList.remove('bg-red-100', 'bg-orange-100', 'bg-yellow-100', 'bg-green-100', 'bg-emerald-100');
+        span.classList.remove('dark:bg-red-900/30', 'dark:bg-orange-900/30', 'dark:bg-yellow-900/30', 'dark:bg-green-900/30', 'dark:bg-emerald-900/30');
+        span.classList.remove('text-red-600', 'text-orange-600', 'text-yellow-600', 'text-green-600', 'text-emerald-600');
+        span.classList.add('bg-emerald-600', 'text-white');
+      });
+    });
+    
+    // Map Markers Interaction
+    document.querySelectorAll('.map-marker').forEach(marker => {
+      marker.addEventListener('mouseenter', function() {
+        const title = this.getAttribute('data-title');
+        const type = this.getAttribute('data-type');
+        
+        const tooltip = document.createElement('div');
+        tooltip.className = 'map-tooltip';
+        tooltip.textContent = title;
+        
+        const rect = this.getBoundingClientRect();
+        const mapRect = this.parentElement.getBoundingClientRect();
+        
+        tooltip.style.left = (rect.left - mapRect.left + 12) + 'px';
+        tooltip.style.top = (rect.top - mapRect.top - 40) + 'px';
+        
+        this.parentElement.appendChild(tooltip);
+        
+        this.tooltip = tooltip;
+      });
+      
+      marker.addEventListener('mouseleave', function() {
+        if (this.tooltip) {
+          this.tooltip.remove();
+          this.tooltip = null;
+        }
+      });
+      
+      marker.addEventListener('click', function() {
+        const title = this.getAttribute('data-title');
+        const type = this.getAttribute('data-type');
+        
+        alert(`${title} - ${type === 'health-center' ? 'স্বাস্থ্য কেন্দ্র' : 
+               type === 'clinic' ? 'ক্লিনিক' : 
+               type === 'ngo' ? 'এনজিও' : 'ল্যান্ডমার্ক'}`);
+      });
+    });
+    
+    // Facility Type Filtering
+    document.querySelectorAll('.facility-type').forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const type = this.value;
+        const markers = document.querySelectorAll(`.map-marker.${type}`);
+        
+        if (this.checked) {
+          markers.forEach(marker => marker.style.display = 'block');
+        } else {
+          markers.forEach(marker => marker.style.display = 'none');
+        }
+      });
+    });
+    
+    // Seasonal Tips
+    document.querySelectorAll('.season-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.season-btn').forEach(b => {
+          b.classList.remove('active', 'bg-emerald-600', 'text-white');
+          b.classList.add('border');
+        });
+        
+        this.classList.add('active', 'bg-emerald-600', 'text-white');
+        this.classList.remove('border');
+        
+        const season = this.getAttribute('data-season');
+        document.querySelectorAll('.season-content').forEach(content => {
+          content.classList.add('hidden');
+        });
+        document.getElementById(`${season}Tips`).classList.remove('hidden');
+      });
+    });
+    
+    // Landmark Search
+    document.getElementById('searchLandmarks').addEventListener('click', function() {
+      const type = document.getElementById('landmarkType').value;
+      const query = document.getElementById('landmarkQuery').value.toLowerCase();
+      
+      const resultsContainer = document.getElementById('landmarkResults');
+      const resultsList = resultsContainer.querySelector('.space-y-2');
+      resultsList.innerHTML = '';
+      
+      // Simulate search results
+      const landmarks = [
+        { name: 'বড় আম গাছ', type: 'tree', location: 'উত্তর গ্রাম', distance: '0.3 কিমি' },
+        { name: 'গ্রাম মসজিদ', type: 'mosque', location: 'মধ্য গ্রাম', distance: '0.5 কিমি' },
+        { name: 'প্রাথমিক বিদ্যালয়', type: 'school', location: 'দক্ষিণ গ্রাম', distance: '0.8 কিমি' },
+        { name: 'সাপ্তাহিক বাজার', type: 'market', location: 'পূর্ব গ্রাম', distance: '1.2 কিমি' }
+      ];
+      
+      let foundResults = false;
+      
+      landmarks.forEach(landmark => {
+        if ((type === 'all' || landmark.type === type) && 
+            (landmark.name.toLowerCase().includes(query) || query === '')) {
+          const resultItem = document.createElement('div');
+          resultItem.className = 'bg-slate-50 dark:bg-slate-800/40 p-3 rounded-lg';
+          resultItem.innerHTML = `
+            <div class="font-medium">${landmark.name}</div>
+            <div class="text-sm text-slate-600 dark:text-slate-300 mt-1">${landmark.location} • ${landmark.distance}</div>
+          `;
+          resultsList.appendChild(resultItem);
+          foundResults = true;
+        }
+      });
+      
+      if (foundResults) {
+        resultsContainer.classList.remove('hidden');
+      } else {
+        resultsContainer.classList.add('hidden');
+        const noResults = document.createElement('div');
+        noResults.className = 'text-center py-4 text-slate-500';
+        noResults.textContent = 'কোনো ল্যান্ডমার্ক পাওয়া যায়নি';
+        resultsList.appendChild(noResults);
+        resultsContainer.classList.remove('hidden');
+      }
+    });
+    
+    // Form Submissions
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('লগইন সফল!');
+      closeModal('accountModal');
+    });
+    
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('রেজিস্ট্রেশন সফল!');
+      closeModal('accountModal');
+    });
+    
+    document.getElementById('checkinForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const mood = document.querySelector('input[name="mood"]:checked');
+      if (!mood) {
+        alert('দয়া করে আপনার মনের অবস্থা নির্বাচন করুন');
+        return;
+      }
+      
+      const note = document.getElementById('checkinNote').value;
+      alert(`চেক-ইন সফলভাবে সংরক্ষণ করা হয়েছে!\nমনের অবস্থা: ${mood.value}\nমন্তব্য: ${note || 'কোনো মন্তব্য নেই'}`);
+      closeModal('checkinModal');
+    });
+    
+    document.getElementById('symptomForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const symptom = document.getElementById('symptomSelect').value;
+      const description = document.getElementById('symptomDescription').value;
+      
+      if (!symptom) {
+        alert('দয়া করে লক্ষণ নির্বাচন করুন');
+        return;
+      }
+      
+      alert(`লক্ষণ রিপোর্ট সফলভাবে জমা দেওয়া হয়েছে!\nলক্ষণ: ${symptom}\nবিবরণ: ${description}`);
+      closeModal('reportSymptomModal');
+    });
+    
+    document.getElementById('anonForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const description = document.getElementById('anonDescription').value;
+      const agreed = document.getElementById('anonAgree').checked;
+      
+      if (!description) {
+        alert('দয়া করে আপনার সমস্যার বিবরণ লিখুন');
+        return;
+      }
+      
+      if (!agreed) {
+        alert('দয়া করে গোপনীয়তা নীতি মেনে নিন');
+        return;
+      }
+      
+      alert('আপনার গোপন অনুরোধ সফলভাবে পাঠানো হয়েছে! শীঘ্রই একজন স্বাস্থ্যকর্মী আপনার সাথে যোগাযোগ করবেন।');
+      closeModal('anonModal');
+    });
+    
+    document.getElementById('eventForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('eventName').value;
+      const datetime = document.getElementById('eventDateTime').value;
+      const location = document.getElementById('eventLocation').value;
+      
+      if (!name || !datetime || !location) {
+        alert('দয়া করে সব তথ্য পূরণ করুন');
+        return;
+      }
+      
+      alert(`ইভেন্ট সফলভাবে যোগ করা হয়েছে!\nনাম: ${name}\nতারিখ ও সময়: ${datetime}\nস্থান: ${location}`);
+      closeModal('eventsModal');
+    });
+    
+    document.getElementById('volunteerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = document.getElementById('volunteerName').value;
+      const phone = document.getElementById('volunteerPhone').value;
+      const skills = document.getElementById('volunteerSkills').value;
+      
+      if (!name || !skills) {
+        alert('দয়া করে নাম ও দক্ষতা পূরণ করুন');
+        return;
+      }
+      
+      alert(`স্বেচ্ছাসেবক সফলভাবে যোগ করা হয়েছে!\nনাম: ${name}\nফোন: ${phone || 'প্রদান করা হয়নি'}\nদক্ষতা: ${skills}`);
+      closeModal('directoryModal');
+    });
+    
+    // Voice Assistant
+    document.getElementById('startListening').addEventListener('click', function() {
+      const voiceStatus = document.querySelector('#voiceModal .bg-emerald-50 p');
+      voiceStatus.textContent = 'শোনা হচ্ছে... কথা বলুন';
+      
+      setTimeout(() => {
+        voiceStatus.textContent = 'আপনার কথা শুনছি...';
+        setTimeout(() => {
+          alert('আপনি বলেছেন: "আমার মন কেমন" - চেক-ইন মডেল খোলা হচ্ছে...');
+          closeModal('voiceModal');
+          openModal('checkinModal');
+        }, 2000);
+      }, 1000);
+    });
+    
+    // Maternal Tracker
+    document.getElementById('addPregnancy').addEventListener('click', function() {
+      const edd = prompt('আনুমানিক ডেলিভারি তারিখ লিখুন (YYYY-MM-DD):');
+      if (edd) {
+        alert(`গর্ভাবস্থা সফলভাবে যোগ করা হয়েছে!\nআনুমানিক ডেলিভারি তারিখ: ${edd}`);
+      }
+    });
+    
+    document.getElementById('addChild').addEventListener('click', function() {
+      const dob = prompt('শিশুর জন্ম তারিখ লিখুন (YYYY-MM-DD):');
+      if (dob) {
+        alert(`শিশু সফলভাবে যোগ করা হয়েছে!\nজন্ম তারিখ: ${dob}`);
+      }
+    });
+    
+    // Initialize with some default selections
+    document.querySelector('input[name="mood"][value="3"]').checked = true;
+    document.querySelector('input[name="mood"][value="3"]').dispatchEvent(new Event('change'));
+    
+    // Add some interactivity to cards
+    document.querySelectorAll('.card-tilt').forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-6px) rotate(-0.4deg)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = '';
+      });
+    });
+  </script>
+</body>
+</html>
